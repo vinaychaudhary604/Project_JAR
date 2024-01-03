@@ -19,8 +19,10 @@ public class Transaction {
     private Long id;
 
     private LocalDateTime timestamp;
-    private BigDecimal amount;
-    private String currency;
+    private BigDecimal amountINR;
+    private String currencyINR;
+    private BigDecimal amountUSD;
+    private String currencyUSD;
     private TransactionType type; // enum for debit or credit
 
     // getters and setters

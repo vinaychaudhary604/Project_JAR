@@ -6,14 +6,12 @@ import com.jar.Kirana_Store.model.TransactionType;
 
 import lombok.Getter;
 import lombok.Setter;
-
-// TransactionRequest.java
-@Getter
+ 
 @Setter
+@Getter
 public class TransactionRequest {
     private BigDecimal amount;
     private String currency;
     private TransactionType type;
-
-    // getters and setters
+ 
 }

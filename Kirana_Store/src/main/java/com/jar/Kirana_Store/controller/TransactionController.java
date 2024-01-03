@@ -20,13 +20,14 @@ import java.util.Map;
 public class TransactionController {
 
     @Autowired
-    private TransactionService transactionService; 
+    private TransactionService transactionService;  
 
     @PostMapping("/record")
-    public ResponseEntity<Transaction> recordTransaction(@RequestBody TransactionRequest request) {
-        Transaction transaction = transactionService.recordTransaction(request);
-        return new ResponseEntity<>(transaction, HttpStatus.CREATED);
+    public ResponseEntity<Transaction> recordTransaction(@RequestBody TransactionRequest transactionRequest) {
+        Transaction recordedTransaction = transactionService.recordTransaction(transactionRequest);
+        return new ResponseEntity<>(recordedTransaction, HttpStatus.CREATED);
     }
+
 
     // @GetMapping("/daily-report")
     // public ResponseEntity<List<Transaction>> getDailyReport(

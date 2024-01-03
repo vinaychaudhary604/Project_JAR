@@ -1,30 +1,50 @@
 package com.jar.Kirana_Store.service;
- 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service; 
   
-import java.math.BigDecimal;
- 
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import java.math.BigDecimal; 
+
 @Service
 public class CurrencyConversionService {
-    @Value("${currency.api.url}")
-    private String currencyApiUrl; // External API for currency conversion
 
-    public BigDecimal convertToINR(BigDecimal amount, String sourceCurrency) {
-        // Implement real-time currency conversion using the provided API
-        // ...
+    private final String apiUrl = "https://api.fxratesapi.com/latest";
+    private final RestTemplate restTemplate = new RestTemplate();
 
-        // For simplicity, let's assume a conversion factor is retrieved from the API
-        BigDecimal conversionFactor = getConversionFactor(sourceCurrency);
+    public BigDecimal fetchActualCurrencyValue(String baseCurrency, String targetCurrency) {
+        String url = apiUrl + "?base=" + baseCurrency + "&symbols=" + targetCurrency;
+        ResponseEntity<CurrencyApiResponse> responseEntity = restTemplate.getForEntity(url, CurrencyApiResponse.class);
+        CurrencyApiResponse response = responseEntity.getBody();
 
-        return amount.multiply(conversionFactor);
+        if (response != null && response.getRates() != null) {
+            Object rateObject = response.getRates().get(targetCurrency);
+
+            if (rateObject instanceof Number) {
+                // Convert to BigDecimal if it's a Number (including Double)
+                return BigDecimal.valueOf(((Number) rateObject).doubleValue());
+            } else if (rateObject instanceof Boolean) {
+                // Handle Boolean value (if needed)
+                return BigDecimal.ONE; // Default to 1.0
+            }
+        }
+ 
+        return BigDecimal.ONE;
     }
 
-    private BigDecimal getConversionFactor(String sourceCurrency) {
-        // Call the external API to get the conversion factor
-        // ...
+    public BigDecimal convertToINR(BigDecimal amount, String baseCurrency) {
+        // Fetch the actual currency value using the provided currency
+        BigDecimal actualCurrencyValue = fetchActualCurrencyValue(baseCurrency, "INR");
 
-        // For simplicity, return a fixed conversion factor
-        return BigDecimal.valueOf(75.0);
+        // Perform currency conversion to INR using the actual currency value
+        return amount.multiply(actualCurrencyValue);
     }
+
+    public BigDecimal convertToUSD(BigDecimal amount, String baseCurrency) {
+        // Fetch the actual currency value using the provided currency
+        BigDecimal actualCurrencyValue = fetchActualCurrencyValue(baseCurrency, "USD");
+
+        // Perform currency conversion to USD using the actual currency value
+        return amount.multiply(actualCurrencyValue);
+    } 
 }
