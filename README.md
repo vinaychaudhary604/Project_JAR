@@ -8,6 +8,8 @@ This backend service is designed to empower Kirana stores in efficiently managin
 - [Endpoints](#endpoints)
   - [Record Transaction](#record-transaction)
   - [Get Daily Report](#get-daily-report)
+  - [Update Transaction By Id](#update-transaction-by-id)
+- [Database Connection and Assumptions](#database-connection-and-assumptions)
 - [Usage](#usage)
 
 ## Getting Started
@@ -98,7 +100,7 @@ curl --location --globoff --request PUT 'localhost:8080/{transactionId}?transact
     "currencyUSD": "USD",
     "type": "DEBIT"
 }'
-## usage
+```
 
 ## Database Connection and Assumptions
 
@@ -133,6 +135,8 @@ spring.datasource.password=password
 - Assumption for transaction types:
   - `DEBIT`: Represented as `0`.
   - `CREDIT`: Represented as `1`.
+
+## usage
 
 - Ensure the service is running locally.
 - Utilize tools like [Postman](https://www.postman.com/) or [curl](https://curl.se/) to interact with the API endpoints.
