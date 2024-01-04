@@ -100,5 +100,39 @@ curl --location --globoff --request PUT 'localhost:8080/{transactionId}?transact
 }'
 ## usage
 
+## Database Connection and Assumptions
+
+### Database Connection
+
+The service uses the `application.properties` file for database configuration. Please ensure you have the following properties set in the file:
+
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/jar_api
+spring.datasource.username=root
+spring.datasource.password=password
+```
+
+### Assumptions
+
+- The `Transaction` model assumes the following structure:
+  ```java
+  public class Transaction {
+      @Id
+      @GeneratedValue(strategy = GenerationType.IDENTITY)
+      private Long id;
+
+      private LocalDateTime timestamp;
+      private BigDecimal amountINR;
+      private String currencyINR;
+      private BigDecimal amountUSD;
+      private String currencyUSD;
+      private TransactionType type; 
+  }
+  ```
+
+- Assumption for transaction types:
+  - `DEBIT`: Represented as `0`.
+  - `CREDIT`: Represented as `1`.
+
 - Ensure the service is running locally.
 - Utilize tools like [Postman](https://www.postman.com/) or [curl](https://curl.se/) to interact with the API endpoints.
