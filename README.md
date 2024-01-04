@@ -66,8 +66,39 @@ To use this service locally or integrate it into your project, follow the steps 
   ```bash
   curl --location --request GET 'localhost:8080/daily_report?start=2024-01-01&end=2024-01-12' \--header 'Content-Type: application/json' \--data '{ "start": "2024-01-01", "end": "2024-01-12" }'
   ```
+## Endpoint
 
-## Usage
+### Update Transaction By Id
+- **Method:** `PUT`
+- **Endpoint:** `/{transactionId}`
+- **Description**: This documentation provides details about the `updateTransaction` API, which is designed to update an existing transaction by its ID.
+
+**Path Parameter**
+- `transactionId` (Long): The unique identifier of the transaction to be updated.
+ **Request Body**
+- `updatedTransaction` (Transaction): .
+ PUT /transactions/{transactionId}
+Content-Type: application/json
+```json
+  {
+    "amountINR": 1500.00,
+    "currencyINR": "INR",
+    "amountUSD": 20.50,
+    "currencyUSD": "USD",
+    "type": "Credit"
+  }
+```
+**Response**: Update the Amount in the Database.
+- **Example**:
+```bash
+curl --location --globoff --request PUT 'localhost:8080/{transactionId}?transactionId=0' \--header 'Content-Type: application/json' \--data '{
+    "amountINR": 90.96,
+    "currencyINR": "INR",
+    "amountUSD": 40,
+    "currencyUSD": "USD",
+    "type": "DEBIT"
+}'
+## usage
 
 - Ensure the service is running locally.
 - Utilize tools like [Postman](https://www.postman.com/) or [curl](https://curl.se/) to interact with the API endpoints.
