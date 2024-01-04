@@ -39,7 +39,7 @@ public class TransactionService {
 
         Transaction transaction = new Transaction();
         transaction.setAmountINR(amountInINR);
-        transaction.setCurrencyINR("INR"); // Indicate the currency as INR
+        transaction.setCurrencyINR("INR");
 
         transaction.setAmountUSD(amountInUSD);
         transaction.setCurrencyUSD("USD");
