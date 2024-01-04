@@ -6,15 +6,18 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; 
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Service; 
 
+import com.jar.Kirana_Store.exception.NotFoundException; 
 import com.jar.Kirana_Store.model.Transaction;
 import com.jar.Kirana_Store.repository.TransactionRepository;
-import com.jar.Kirana_Store.transaction_request_dto.TransactionRequest; 
+import com.jar.Kirana_Store.transaction_request_dto.TransactionRequest;
+ 
 
 @Component
 @Service
@@ -25,12 +28,12 @@ public class TransactionService {
     @Autowired
     private CurrencyConversionService currencyConversionService;
 
-    public Transaction recordTransaction(TransactionRequest transactionRequest) {
-        // Fetch the actual value of the provided currency using the external API
+    public Transaction recordTransaction(TransactionRequest transactionRequest) { 
+
         // BigDecimal actualCurrencyValueUSD = currencyConversionService.fetchActualCurrencyValue(transactionRequest.getCurrency(), "USD");
         // BigDecimal actualCurrencyValueINR = currencyConversionService.fetchActualCurrencyValue(transactionRequest.getCurrency(), "INR");
 
-        // Convert the provided amount to INR
+        
         BigDecimal amountInINR = currencyConversionService.convertToINR(transactionRequest.getAmount(), transactionRequest.getCurrency());
         BigDecimal amountInUSD = currencyConversionService.convertToUSD(transactionRequest.getAmount(), transactionRequest.getCurrency());
 
@@ -46,21 +49,32 @@ public class TransactionService {
 
         return transactionRepository.save(transaction);
     }
-    
-    
 
-    // public List<Transaction> getTransactionsByDateRange(LocalDateTime start, LocalDateTime end) {
-    //     return transactionRepository.findByTimestampBetween(start, end);
-    // }
+    public Transaction updateTransactionById(Long transactionId, Transaction updatedTransaction) {
 
-    // public Map<LocalDate, List<Transaction>> getDailyReport(LocalDate startDate, LocalDate endDate) {
-    //     List<Transaction> allTransactions = transactionRepository.findByTimestampBetween(
-    //             startDate.atStartOfDay(), endDate.atTime(LocalTime.MAX)
-    //     );
+        Optional<Transaction> existingTransactionOptional = transactionRepository.findById(transactionId);
+ 
+        if (existingTransactionOptional.isPresent()) {
+            Transaction existingTransaction = existingTransactionOptional.get(); 
 
-    //     return allTransactions.stream()
-    //             .collect(Collectors.groupingBy(transaction -> transaction.getTimestamp().toLocalDate()));
-    // }
+            if(!existingTransactionOptional.get().getCurrencyINR().isEmpty()){
+                existingTransaction.setAmountINR(updatedTransaction.getAmountINR());
+                existingTransaction.setCurrencyINR(updatedTransaction.getCurrencyINR());
+            }
+            
+            
+            if(!existingTransactionOptional.get().getCurrencyUSD().isEmpty()){
+                existingTransaction.setAmountUSD(updatedTransaction.getAmountUSD());
+                existingTransaction.setCurrencyUSD(updatedTransaction.getCurrencyUSD());
+            }
+            
+            existingTransaction.setType(updatedTransaction.getType());
+ 
+            return transactionRepository.save(existingTransaction);
+        } else {  
+            throw new NotFoundException("You have given wrong input");
+        }
+    }  
 
     public Map<LocalDate, List<Transaction>> getDailyReport(LocalDate startDate, LocalDate endDate) {
         LocalDateTime startDateTime = startDate.atStartOfDay();
@@ -70,5 +84,5 @@ public class TransactionService {
 
         return allTransactions.stream()
                 .collect(Collectors.groupingBy(transaction -> transaction.getTimestamp().toLocalDate()));
-    } 
+    }  
 }
